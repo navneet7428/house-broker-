@@ -1,0 +1,134 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getApprovedHouses, deleteHouse } from "../services/api";
+import "../styles/houses.css";
+
+function Houses() {
+  const [houses, setHouses] = useState([]);
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const load = () => {
+    getApprovedHouses().then((res) => {
+      const data = res.data.map((h) => ({
+        ...h,
+        imageIndex: 0,
+      }));
+      setHouses(data);
+    });
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const nextImage = (id) => {
+    setHouses((prev) =>
+      prev.map((h) =>
+        h._id === id
+          ? {
+              ...h,
+              imageIndex:
+                (h.imageIndex + 1) % h.images.length,
+            }
+          : h
+      )
+    );
+  };
+
+  const prevImage = (id) => {
+    setHouses((prev) =>
+      prev.map((h) =>
+        h._id === id
+          ? {
+              ...h,
+              imageIndex:
+                (h.imageIndex - 1 + h.images.length) % h.images.length,
+            }
+          : h
+      )
+    );
+  };
+
+  return (
+    <div className="listing-page">
+      <h2 className="page-title">Available Properties</h2>
+
+      {houses.map((h) => (
+        <div className="listing-card" key={h._id}>
+          {/* IMAGE */}
+          <div className="listing-image">
+            <img
+              src={`http://localhost:3001${h.images[h.imageIndex]}`}
+              alt={h.title}
+              onClick={() => navigate(`/houses/${h._id}`)}
+            />
+
+            {h.images.length > 1 && (
+              <>
+                <button
+                  className="img-btn left"
+                  onClick={() => prevImage(h._id)}
+                >
+                  ‹
+                </button>
+                <button
+                  className="img-btn right"
+                  onClick={() => nextImage(h._id)}
+                >
+                  ›
+                </button>
+              </>
+            )}
+
+            <span className="photo-count">
+              {h.images.length} Photos
+            </span>
+          </div>
+
+          {/* DETAILS */}
+          <div
+            className="listing-details"
+            onClick={() => navigate(`/houses/${h._id}`)}
+          >
+            <h3>{h.title}</h3>
+            <p className="sub-location">{h.location}</p>
+            <p>{h.description?.slice(0, 100)}...</p>
+          </div>
+
+          {/* ACTION */}
+          <div className="listing-action">
+            <div className="price">₹ {h.price}</div>
+
+            <button
+              className="btn primary"
+              onClick={() => navigate(`/houses/${h._id}`)}
+            >
+              View Details
+            </button>
+
+            {/* ✅ ADMIN DELETE */}
+            {user?.role === "admin" && (
+              <button
+                className="btn danger"
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Delete this property permanently?"
+                    )
+                  ) {
+                    deleteHouse(h._id).then(load);
+                  }
+                }}
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Houses;

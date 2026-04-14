@@ -1,0 +1,455 @@
+/* =========================
+   GLOBAL
+========================= */
+body {
+  background: #f4f6f9;
+  font-family: "Inter", sans-serif;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #0f172a;
+}
+
+.center-text {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 1.4rem;
+  color: #64748b;
+}
+
+/* =========================
+   PAGE WRAPPER
+========================= */
+.houses-page,
+.list-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 50px 20px;
+}
+
+/* =========================
+   PROPERTY CARD (COMMON)
+========================= */
+.house-row,
+.property-card {
+  display: flex;
+  gap: 25px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.house-row:hover,
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   IMAGE / SLIDER
+========================= */
+.house-row img,
+.property-image img {
+  width: 550px;
+  height: 270px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+/* slider wrapper safety */
+.house-row > div:first-child {
+  flex-shrink: 0;
+}
+
+/* =========================
+   PROPERTY INFO
+========================= */
+.house-info,
+.property-details {
+  flex: 1;
+}
+.clickable {
+  cursor: pointer;
+}
+.house-info h3,
+.property-details h2 {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+  color: #0f172a;
+}
+
+.house-info p,
+.property-details p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+  color: #475569;
+}
+.house-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.house-row {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.house-row:hover {
+  transform: scale(1.01);
+}
+
+/* =========================
+   PRICE / ACTION
+========================= */
+.property-action {
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.property-action h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* =========================
+   STATUS BADGE
+========================= */
+.property-details b {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.property-details b.approved {
+  background: #22c55e;
+  color: #ffffff;
+}
+
+.property-details b.pending {
+  background: #f59e0b;
+  color: #111827;
+}
+
+/* =========================
+   ADMIN / SELLER BUTTONS
+========================= */
+button {
+  padding: 10px 18px;
+  border-radius: 25px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
+/* delete */
+.delete-btn {
+  background: #dc2626;
+  color: #fff;
+}
+
+/* approve */
+.approve-btn {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  color: #fff;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  .house-row,
+  .property-card {
+    flex-direction: column;
+  }
+
+  .house-row img,
+  .property-image img {
+    width: 100%;
+    height: 220px;
+  }
+
+  .property-action {
+    justify-content: flex-start;
+    margin-top: 10px;
+  }
+  /* =========================
+   MY HOUSES IMAGE FIX
+========================= */
+
+.house-image {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.house-image img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+/* =========================
+   STATUS BADGE
+========================= */
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.approved {
+  background: #22c55e;
+  color: #ffffff;
+}
+
+.status-badge.pending {
+  background: #f59e0b;
+  color: #111827;
+}
+}
+.houses-page {
+  max-width: 1100px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+.house-card {
+  display: flex;
+  gap: 20px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.house-card:hover {
+  transform: translateY(-3px);
+}
+
+.house-image {
+  position: relative;
+  width: 260px;
+  height: 160px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.house-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.slider-btn.left {
+  left: 8px;
+}
+
+.slider-btn.right {
+  right: 8px;
+}
+
+.house-info h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.house-info .location {
+  color: #666;
+  margin: 4px 0;
+}
+
+.house-info .price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 20px;
+  font-size: 12px;
+}
+.listing-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.page-title {
+  margin-bottom: 20px;
+}
+
+.listing-card {
+  display: grid;
+  grid-template-columns: 280px 1fr 260px;
+  gap: 20px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+}
+
+/* IMAGE */
+.listing-image {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.listing-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.img-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.img-btn.left { left: 8px; }
+.img-btn.right { right: 8px; }
+
+.photo-count {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* DETAILS */
+.listing-details h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.sub-location {
+  color: #555;
+  margin: 4px 0 8px;
+}
+
+.spec-row {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.short-desc {
+  font-size: 14px;
+  color: #555;
+}
+
+.posted {
+  font-size: 12px;
+  color: #777;
+}
+
+/* RIGHT */
+.listing-action {
+  text-align: right;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.price-sqft {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+}
+
+.btn.outline {
+  background: #fff;
+  border: 1px solid #d32f2f;
+  color: #d32f2f;
+}
+.delete-btn,
+.btn.danger {
+  background: #e11d48;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.delete-btn:hover,
+.btn.danger:hover {
+  background: #be123c;
+}

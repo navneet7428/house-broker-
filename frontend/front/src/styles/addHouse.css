@@ -1,0 +1,121 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;600;700&display=swap");
+
+body {
+  font-family: "Libre Caslon Text", serif;
+  background: #faf7f2;
+}
+
+.add-house-page {
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 20px 80px;
+}
+
+.page-header h1 {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.page-header p {
+  color: #777;
+  margin-bottom: 30px;
+}
+
+/* SECTION CARD */
+.form-section {
+  background: #fff;
+  border-radius: 18px;
+  padding: 26px;
+  margin-bottom: 28px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+}
+
+.form-section h3 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: #5c402b;
+}
+
+/* INPUTS */
+.house-form input,
+.house-form textarea {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e0d8;
+  font-size: 14px;
+}
+
+.house-form textarea {
+  min-height: 90px;
+}
+
+/* IMAGE GRID */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.image-box {
+  height: 150px;
+  border-radius: 14px;
+  border: 2px dashed #ddd;
+  background: #f6f2ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-placeholder {
+  color: #777;
+  cursor: pointer;
+}
+
+.remove-img {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* AMENITIES */
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.amenities-grid label {
+  background: #f4efe9;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* SUBMIT */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: none;
+  background: #8b5e3c;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}

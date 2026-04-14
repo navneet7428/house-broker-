@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Libre Caslon Text', serif;
+  background: linear-gradient(180deg, #faf7f2, #f4efe9);
+  color: #2b2b2b;
+}
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px 0;
+  }
+  
+  button {
+    padding: 8px 14px;
+    border: none;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #1e40af;
+  }
+  h1, h2, h3 {
+    font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+  
+  h4, h5 {
+    font-weight: 600;
+  }
+  button,
+input,
+select,
+textarea {
+  font-family: 'Libre Caslon Text', serif;
+}
