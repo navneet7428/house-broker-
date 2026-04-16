@@ -8,7 +8,12 @@ function Houses() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+  // SAFE URL
+  const API_URL =
+    process.env.REACT_APP_API_URL ||
+    "https://house-broker-backend.onrender.com/api";
+
+  const IMAGE_URL = API_URL.replace("/api", "");
 
   const load = () => {
     getApprovedHouses()
@@ -33,7 +38,7 @@ function Houses() {
           ? {
               ...h,
               imageIndex:
-                (h.imageIndex + 1) % h.images.length,
+                (h.imageIndex + 1) % (h.images?.length || 1),
             }
           : h
       )
@@ -47,8 +52,8 @@ function Houses() {
           ? {
               ...h,
               imageIndex:
-                (h.imageIndex - 1 + h.images.length) %
-                h.images.length,
+                (h.imageIndex - 1 + (h.images?.length || 1)) %
+                (h.images?.length || 1),
             }
           : h
       )
@@ -61,16 +66,15 @@ function Houses() {
 
       {houses.map((h) => (
         <div className="listing-card" key={h._id}>
-
           {/* IMAGE */}
           <div className="listing-image">
             <img
-              src={`${IMAGE_URL}${h.images[h.imageIndex]}`}
+              src={`${IMAGE_URL}${h.images?.[h.imageIndex] || ""}`}
               alt={h.title}
               onClick={() => navigate(`/houses/${h._id}`)}
             />
 
-            {h.images.length > 1 && (
+            {h.images && h.images.length > 1 && (
               <>
                 <button
                   className="img-btn left"
@@ -89,7 +93,7 @@ function Houses() {
             )}
 
             <span className="photo-count">
-              {h.images.length} Photos
+              {h.images?.length || 0} Photos
             </span>
           </div>
 
@@ -120,7 +124,6 @@ function Houses() {
               View Details
             </button>
 
-            {/* ADMIN DELETE */}
             {user?.role === "admin" && (
               <button
                 className="btn danger"
@@ -138,7 +141,6 @@ function Houses() {
               </button>
             )}
           </div>
-
         </div>
       ))}
     </div>

@@ -7,19 +7,26 @@ function Wishlist() {
   const navigate = useNavigate();
   const [houses, setHouses] = useState([]);
 
-  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+  // SAFE URL
+  const API_URL =
+    process.env.REACT_APP_API_URL ||
+    "https://house-broker-backend.onrender.com/api";
+
+  const IMAGE_URL = API_URL.replace("/api", "");
 
   useEffect(() => {
     API.get("/wishlist")
       .then((res) => {
-        setHouses(res.data);
+        setHouses(Array.isArray(res.data) ? res.data : []);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setHouses([]);
+      });
   }, []);
 
   return (
     <div className="home-page">
-
       <section className="listing-section">
         <h2>My Wishlist ({houses.length})</h2>
 
@@ -31,11 +38,10 @@ function Wishlist() {
 
         {houses.map((h) => (
           <div className="property-card" key={h._id}>
-
             {/* IMAGE */}
             <div className="property-image">
               <img
-                src={`${IMAGE_URL}${h.images?.[0]}`}
+                src={`${IMAGE_URL}${h.images?.[0] || ""}`}
                 alt={h.title}
                 onClick={() => navigate(`/houses/${h._id}`)}
               />
@@ -64,11 +70,9 @@ function Wishlist() {
                 </button>
               </div>
             </div>
-
           </div>
         ))}
       </section>
-
     </div>
   );
 }

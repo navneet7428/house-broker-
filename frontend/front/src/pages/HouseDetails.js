@@ -11,7 +11,12 @@ function HouseDetails() {
   const [interest, setInterest] = useState(7.5);
   const [tenure, setTenure] = useState(20);
 
-  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+  // SAFE URL
+  const API_URL =
+    process.env.REACT_APP_API_URL ||
+    "https://house-broker-backend.onrender.com/api";
+
+  const IMAGE_URL = API_URL.replace("/api", "");
 
   useEffect(() => {
     API.get(`/houses/${id}`)
@@ -19,7 +24,9 @@ function HouseDetails() {
         setHouse(res.data);
         setActiveImg(0);
       })
-      .catch(() => console.log("Error fetching house"));
+      .catch((err) => {
+        console.log("Error fetching house", err);
+      });
   }, [id]);
 
   if (!house) return <h2 className="center">Loading...</h2>;
@@ -33,7 +40,7 @@ function HouseDetails() {
 
   const price = Number(house.price || 0);
   const downPayment = Number(house.bookingAmount || 0);
-  const loanAmount = price - downPayment;
+  const loanAmount = Math.max(price - downPayment, 0);
 
   const monthlyRate = interest / 12 / 100;
   const months = tenure * 12;
@@ -50,18 +57,18 @@ function HouseDetails() {
 
   return (
     <div className="hd-page">
-
       {/* GALLERY */}
       <div className="hd-gallery">
-
         <div className="hd-main-img">
           <img
-            src={`${IMAGE_URL}${images[activeImg]}`}
+            src={`${IMAGE_URL}${images[activeImg] || ""}`}
             alt="house"
           />
 
           <span className="img-count">
-            {activeImg + 1}/{images.length}
+            {images.length > 0
+              ? `${activeImg + 1}/${images.length}`
+              : "0/0"}
           </span>
         </div>
 
@@ -76,15 +83,12 @@ function HouseDetails() {
             />
           ))}
         </div>
-
       </div>
 
-      {/* MAIN LAYOUT */}
+      {/* MAIN */}
       <div className="hd-layout">
-
         {/* LEFT */}
         <div className="hd-left">
-
           <h1>{getValue(house.title)}</h1>
           <p className="hd-location">{getValue(house.location)}</p>
 
@@ -102,13 +106,11 @@ function HouseDetails() {
             <div>🚗 Parking</div>
           </div>
 
-          {/* ABOUT */}
           <div className="hd-card">
             <h3>About This Property</h3>
             <p>{getValue(house.description)}</p>
           </div>
 
-          {/* PROPERTY DETAILS */}
           <div className="hd-card">
             <h3>Property Details</h3>
 
@@ -120,7 +122,6 @@ function HouseDetails() {
             </div>
           </div>
 
-          {/* PRICE */}
           <div className="hd-card beige">
             <h3>Price Breakdown</h3>
 
@@ -150,7 +151,6 @@ function HouseDetails() {
             </div>
           </div>
 
-          {/* AMENITIES */}
           <div className="hd-card">
             <h3>Amenities</h3>
 
@@ -167,7 +167,6 @@ function HouseDetails() {
             </div>
           </div>
 
-          {/* GOOGLE MAP */}
           {house.location && (
             <div className="hd-card">
               <h3>Location</h3>
@@ -181,13 +180,10 @@ function HouseDetails() {
               />
             </div>
           )}
-
         </div>
 
         {/* RIGHT */}
         <div className="hd-right">
-
-          {/* SELLER */}
           <div className="hd-seller">
             <h3>Contact Seller</h3>
 
@@ -202,6 +198,7 @@ function HouseDetails() {
             <button
               className="btn-primary"
               onClick={() =>
+                house.sellerPhone &&
                 window.open(`tel:${house.sellerPhone}`)
               }
             >
@@ -211,6 +208,7 @@ function HouseDetails() {
             <button
               className="btn-whatsapp"
               onClick={() =>
+                house.sellerPhone &&
                 window.open(
                   `https://wa.me/91${house.sellerPhone}?text=Hi, I am interested in ${house.title}`
                 )
@@ -220,7 +218,6 @@ function HouseDetails() {
             </button>
           </div>
 
-          {/* EMI */}
           <div className="hd-emi">
             <h3>EMI Calculator</h3>
 
@@ -267,7 +264,6 @@ function HouseDetails() {
               <strong>₹ {emi}</strong>
             </div>
           </div>
-
         </div>
       </div>
     </div>

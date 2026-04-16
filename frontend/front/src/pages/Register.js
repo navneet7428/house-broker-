@@ -17,52 +17,85 @@ function Register() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const redirectByRole = (role) => {
     if (role === "seller") navigate("/my-houses");
+    else if (role === "admin") navigate("/admin/pending");
     else navigate("/");
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
+  // NORMAL REGISTER
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setLoading(true);
 
     try {
-      const { data } = await API.post("/auth/register", form);
+      const { data } = await API.post(
+        "/auth/register",
+        form
+      );
 
-      // ✅ Normal register ke baad direct login karwana hai to:
       saveUser(data);
-      redirectByRole(data.user?.role);
+      setSuccess(
+        "Registration successful"
+      );
 
-      // ✅ Agar tu chahe user ko login page pe bhejna ho:
-      // setSuccess("Registration successful. Please login.");
-      // setTimeout(() => navigate("/login"), 1500);
-
+      setTimeout(() => {
+        redirectByRole(data.user?.role);
+      }, 800);
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      setError(
+        err.response?.data?.message ||
+          "Registration failed"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ✅ Google Register
-  const handleGoogleRegister = async (credentialResponse) => {
+  // GOOGLE REGISTER
+  const handleGoogleRegister = async (
+    credentialResponse
+  ) => {
     try {
       setError("");
+      setLoading(true);
 
-      const { data } = await API.post("/auth/google-register", {
-        credential: credentialResponse.credential,
-        role: form.role, // ✅ buyer/seller chosen role
-      });
+      const { data } = await API.post(
+        "/auth/google-register",
+        {
+          credential:
+            credentialResponse?.credential,
+          role: form.role,
+        }
+      );
 
       saveUser(data);
-      redirectByRole(data.user?.role);
 
+      setSuccess(
+        "Google registration successful"
+      );
+
+      setTimeout(() => {
+        redirectByRole(data.user?.role);
+      }, 800);
     } catch (err) {
-      setError(err.response?.data?.message || "Google register failed");
+      setError(
+        err.response?.data?.message ||
+          "Google register failed"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,12 +103,21 @@ function Register() {
     <div className="auth-page">
       <div className="auth-card">
         <h2>Create Account</h2>
-        <p className="sub-text">Join HouseBroker today</p>
+        <p className="sub-text">
+          Join HouseBroker today
+        </p>
 
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
+        {error && (
+          <div className="error">{error}</div>
+        )}
 
-        {/* ✅ ROLE SELECT FOR BOTH NORMAL + GOOGLE */}
+        {success && (
+          <div className="success">
+            {success}
+          </div>
+        )}
+
+        {/* ROLE */}
         <select
           name="role"
           value={form.role}
@@ -83,15 +125,23 @@ function Register() {
           className="role-select"
           style={{ marginBottom: "16px" }}
         >
-          <option value="buyer">Buyer</option>
-          <option value="seller">Seller</option>
+          <option value="buyer">
+            Buyer
+          </option>
+          <option value="seller">
+            Seller
+          </option>
         </select>
 
-        {/* ✅ GOOGLE REGISTER */}
+        {/* GOOGLE */}
         <div style={{ marginBottom: "18px" }}>
           <GoogleLogin
             onSuccess={handleGoogleRegister}
-            onError={() => setError("Google register failed")}
+            onError={() =>
+              setError(
+                "Google register failed"
+              )
+            }
           />
         </div>
 
@@ -99,7 +149,7 @@ function Register() {
           <span>OR</span>
         </div>
 
-        {/* ✅ NORMAL REGISTER */}
+        {/* FORM */}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -128,12 +178,25 @@ function Register() {
             required
           />
 
-          <button type="submit">Register</button>
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? "Please wait..."
+              : "Register"}
+          </button>
         </form>
 
         <p className="switch">
           Already have an account?{" "}
-          <span onClick={() => navigate("/login")}>Login</span>
+          <span
+            onClick={() =>
+              navigate("/login")
+            }
+          >
+            Login
+          </span>
         </p>
       </div>
     </div>

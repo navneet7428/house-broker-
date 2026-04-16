@@ -8,8 +8,13 @@ import "../styles/auth.css";
 function Login() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const redirectByRole = (role) => {
     if (role === "admin") navigate("/admin/pending");
@@ -18,35 +23,58 @@ function Login() {
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
+  // NORMAL LOGIN
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const { data } = await API.post("/auth/login", form);
+
       saveUser(data);
       redirectByRole(data.user?.role);
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(
+        err.response?.data?.message ||
+          "Login failed"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ✅ Google Login
-  const handleGoogleLogin = async (credentialResponse) => {
+  // GOOGLE LOGIN
+  const handleGoogleLogin = async (
+    credentialResponse
+  ) => {
     try {
       setError("");
+      setLoading(true);
 
-      const { data } = await API.post("/auth/google-login", {
-        credential: credentialResponse.credential,
-      });
+      const { data } = await API.post(
+        "/auth/google-login",
+        {
+          credential:
+            credentialResponse?.credential,
+        }
+      );
 
       saveUser(data);
       redirectByRole(data.user?.role);
     } catch (err) {
-      setError(err.response?.data?.message || "Google login failed");
+      setError(
+        err.response?.data?.message ||
+          "Google login failed"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,15 +82,23 @@ function Login() {
     <div className="auth-page">
       <div className="auth-card">
         <h2>Welcome Back</h2>
-        <p className="sub-text">Login to continue</p>
+        <p className="sub-text">
+          Login to continue
+        </p>
 
-        {error && <div className="error">{error}</div>}
+        {error && (
+          <div className="error">{error}</div>
+        )}
 
-        {/* ✅ GOOGLE LOGIN */}
+        {/* GOOGLE LOGIN */}
         <div style={{ marginBottom: "18px" }}>
           <GoogleLogin
             onSuccess={handleGoogleLogin}
-            onError={() => setError("Google login failed")}
+            onError={() =>
+              setError(
+                "Google login failed"
+              )
+            }
           />
         </div>
 
@@ -70,7 +106,7 @@ function Login() {
           <span>OR</span>
         </div>
 
-        {/* ✅ NORMAL LOGIN */}
+        {/* NORMAL LOGIN */}
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -90,12 +126,25 @@ function Login() {
             required
           />
 
-          <button type="submit">Login</button>
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? "Please wait..."
+              : "Login"}
+          </button>
         </form>
 
         <p className="switch">
           Don’t have an account?{" "}
-          <span onClick={() => navigate("/register")}>Register</span>
+          <span
+            onClick={() =>
+              navigate("/register")
+            }
+          >
+            Register
+          </span>
         </p>
       </div>
     </div>
