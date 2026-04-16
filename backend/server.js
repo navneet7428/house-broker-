@@ -15,7 +15,11 @@ const app = express();
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3002",
+      "https://house-broker-frontend.vercel.app",
+    ],
     credentials: true,
   })
 );
@@ -39,7 +43,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/houses", houseRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 
-// Test route (important to avoid "Cannot GET /")
+// Test route
 app.get("/", (req, res) => {
   res.send("House Broker API Running 🚀");
 });
