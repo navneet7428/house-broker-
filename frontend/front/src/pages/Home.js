@@ -17,14 +17,17 @@ function Home() {
   const [bedFilter, setBedFilter] = useState("");
   const [priceFilter, setPriceFilter] = useState("");
 
-  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+  // SAFE BASE URL
+  const API_URL =
+    process.env.REACT_APP_API_URL ||
+    "https://house-broker-backend.onrender.com/api";
+
+  const IMAGE_URL = API_URL.replace("/api", "");
 
   /* FETCH APPROVED HOUSES */
   useEffect(() => {
     API.get("/houses/approved")
-      .then((res) => {
-        setHouses(res.data);
-      })
+      .then((res) => setHouses(res.data))
       .catch((err) => console.log(err));
   }, []);
 
@@ -85,17 +88,9 @@ function Home() {
 
   return (
     <div className="home-page">
-
       {/* HERO */}
       <section className="hero-section">
-
-        <video
-          className="hero-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-        >
+        <video className="hero-video" autoPlay muted loop playsInline>
           <source
             src="Luxury_Real_Estate_Hero_Video_Creation.mp4"
             type="video/mp4"
@@ -119,26 +114,25 @@ function Home() {
               }}
             />
 
-            <button onClick={handleSearch}>
-              Search
-            </button>
+            <button onClick={handleSearch}>Search</button>
           </div>
         </div>
       </section>
 
       {/* FILTER */}
       <section className="filter-section">
-
         <select
           value={locationFilter}
           onChange={(e) => setLocationFilter(e.target.value)}
         >
           <option value="">Location</option>
-          {[...new Set(houses.map((h) => h.location))].map((loc) => (
-            <option key={loc} value={loc}>
-              {loc}
-            </option>
-          ))}
+          {[...new Set(houses.map((h) => h.location).filter(Boolean))].map(
+            (loc) => (
+              <option key={loc} value={loc}>
+                {loc}
+              </option>
+            )
+          )}
         </select>
 
         <select
@@ -146,11 +140,13 @@ function Home() {
           onChange={(e) => setTypeFilter(e.target.value)}
         >
           <option value="">Property Type</option>
-          {[...new Set(houses.map((h) => h.type))].map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
+          {[...new Set(houses.map((h) => h.type).filter(Boolean))].map(
+            (type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            )
+          )}
         </select>
 
         <select
@@ -158,11 +154,13 @@ function Home() {
           onChange={(e) => setBedFilter(e.target.value)}
         >
           <option value="">Bedrooms</option>
-          {[...new Set(houses.map((h) => h.bedrooms))].map((bed) => (
-            <option key={bed} value={bed}>
-              {bed} Beds
-            </option>
-          ))}
+          {[...new Set(houses.map((h) => h.bedrooms).filter(Boolean))].map(
+            (bed) => (
+              <option key={bed} value={bed}>
+                {bed} Beds
+              </option>
+            )
+          )}
         </select>
 
         <select
@@ -174,7 +172,6 @@ function Home() {
           <option value="5000000">Under 50L</option>
           <option value="10000000">Under 1Cr</option>
         </select>
-
       </section>
 
       {/* LISTING */}
@@ -186,12 +183,15 @@ function Home() {
             (id) => id === h._id || id?._id === h._id
           );
 
+          const imageSrc = h.images?.[0]
+            ? `${IMAGE_URL}${h.images[0]}`
+            : "/fallback.jpg";
+
           return (
             <div className="property-card" key={h._id}>
-
               <div className="property-image">
                 <img
-                  src={`${IMAGE_URL}${h.images?.[0]}`}
+                  src={imageSrc}
                   alt={h.title}
                   onClick={() => navigate(`/houses/${h._id}`)}
                 />
@@ -209,7 +209,6 @@ function Home() {
               </div>
 
               <div className="property-info">
-
                 <h3>{h.title}</h3>
                 <p className="location">{h.location}</p>
 
@@ -222,9 +221,7 @@ function Home() {
                 <div className="price-row">
                   <div>
                     <strong>₹ {h.price}</strong>
-                    <small>
-                      ₹ {h.pricePerSqft || "-"} / sqft
-                    </small>
+                    <small>₹ {h.pricePerSqft || "-"} / sqft</small>
                   </div>
 
                   <button
@@ -234,13 +231,11 @@ function Home() {
                     View Details
                   </button>
                 </div>
-
               </div>
             </div>
           );
         })}
       </section>
-
     </div>
   );
 }
