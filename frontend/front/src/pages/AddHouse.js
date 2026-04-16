@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import "../styles/addHouse.css";
 
 function AddHouse() {
-
   const [images, setImages] = useState([]);
 
   const [form, setForm] = useState({
@@ -45,15 +44,20 @@ function AddHouse() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    let updated = { ...form, [name]: value };
+    let updated = {
+      ...form,
+      [name]: value,
+    };
 
-    // auto calculate price per sqft
+    // Auto calculate price per sqft
     if (name === "price" || name === "carpetArea") {
-      const price = name === "price" ? value : form.price;
-      const area = name === "carpetArea" ? value : form.carpetArea;
+      const price = Number(name === "price" ? value : form.price);
+      const area = Number(name === "carpetArea" ? value : form.carpetArea);
 
-      if (price && area) {
+      if (price > 0 && area > 0) {
         updated.pricePerSqft = Math.round(price / area);
+      } else {
+        updated.pricePerSqft = "";
       }
     }
 
@@ -94,13 +98,40 @@ function AddHouse() {
     images.forEach((img) => data.append("images", img));
 
     try {
-      await axios.post("http://localhost:3001/api/houses/add", data, {
+      await API.post("/houses/add", data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       alert("Property submitted for review");
+
+      setForm({
+        title: "",
+        description: "",
+        type: "",
+        location: "",
+        price: "",
+        bookingAmount: "",
+        pricePerSqft: "",
+        registrationCharges: "",
+        maintenancePerMonth: "",
+        bedrooms: "",
+        bathrooms: "",
+        carpetArea: "",
+        facing: "",
+        furnishing: "",
+        floor: "",
+        totalFloors: "",
+        projectName: "",
+        developer: "",
+        fullAddress: "",
+        sellerName: "",
+        sellerPhone: "",
+        amenities: [],
+      });
+
+      setImages([]);
 
     } catch (err) {
       console.error(err);
@@ -110,7 +141,6 @@ function AddHouse() {
 
   return (
     <div className="add-house-page">
-
       <div className="page-header">
         <h1>Add New Property</h1>
         <p>Fill in the details to list your property</p>
@@ -123,7 +153,6 @@ function AddHouse() {
         <div className="image-grid">
           {Array.from({ length: 6 }).map((_, i) => (
             <div className="image-box" key={i}>
-
               {images[i] ? (
                 <>
                   <img src={URL.createObjectURL(images[i])} alt="" />
@@ -138,10 +167,14 @@ function AddHouse() {
               ) : (
                 <label className="upload-placeholder">
                   Click to upload
-                  <input type="file" hidden onChange={handleImageChange} />
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
                 </label>
               )}
-
             </div>
           ))}
         </div>
@@ -153,26 +186,28 @@ function AddHouse() {
         <div className="form-section">
           <h3>Basic Information</h3>
 
-          <input name="title" placeholder="Property Title" onChange={handleChange} />
+          <input name="title" value={form.title} placeholder="Property Title" onChange={handleChange} />
 
           <textarea
             name="description"
+            value={form.description}
             placeholder="Description"
             onChange={handleChange}
           />
 
-          <input name="type" placeholder="Sale / Rent" onChange={handleChange} />
+          <input name="type" value={form.type} placeholder="Sale / Rent" onChange={handleChange} />
         </div>
 
         {/* LOCATION */}
         <div className="form-section">
           <h3>Location & Pricing</h3>
 
-          <input name="location" placeholder="Location" onChange={handleChange} />
+          <input name="location" value={form.location} placeholder="Location" onChange={handleChange} />
 
           <input
             name="price"
             type="number"
+            value={form.price}
             placeholder="Total Price"
             onChange={handleChange}
           />
@@ -180,6 +215,7 @@ function AddHouse() {
           <input
             name="bookingAmount"
             type="number"
+            value={form.bookingAmount}
             placeholder="Booking Amount"
             onChange={handleChange}
           />
@@ -187,14 +223,15 @@ function AddHouse() {
           <input
             name="pricePerSqft"
             type="number"
-            placeholder="Price per Sqft"
             value={form.pricePerSqft}
+            placeholder="Price per Sqft"
             readOnly
           />
 
           <input
             name="registrationCharges"
             type="number"
+            value={form.registrationCharges}
             placeholder="Registration Charges"
             onChange={handleChange}
           />
@@ -202,6 +239,7 @@ function AddHouse() {
           <input
             name="maintenancePerMonth"
             type="number"
+            value={form.maintenancePerMonth}
             placeholder="Maintenance / Month"
             onChange={handleChange}
           />
@@ -211,29 +249,21 @@ function AddHouse() {
         <div className="form-section">
           <h3>Property Details</h3>
 
-          <input name="bedrooms" type="number" placeholder="Bedrooms" onChange={handleChange} />
-          <input name="bathrooms" type="number" placeholder="Bathrooms" onChange={handleChange} />
-
-          <input
-            name="carpetArea"
-            type="number"
-            placeholder="Carpet Area (sqft)"
-            onChange={handleChange}
-          />
-
-          <input name="facing" placeholder="Facing (North / East etc)" onChange={handleChange} />
-          <input name="furnishing" placeholder="Furnishing" onChange={handleChange} />
-
-          <input name="floor" type="number" placeholder="Floor" onChange={handleChange} />
-          <input name="totalFloors" type="number" placeholder="Total Floors" onChange={handleChange} />
+          <input name="bedrooms" type="number" value={form.bedrooms} placeholder="Bedrooms" onChange={handleChange} />
+          <input name="bathrooms" type="number" value={form.bathrooms} placeholder="Bathrooms" onChange={handleChange} />
+          <input name="carpetArea" type="number" value={form.carpetArea} placeholder="Carpet Area (sqft)" onChange={handleChange} />
+          <input name="facing" value={form.facing} placeholder="Facing (North / East etc)" onChange={handleChange} />
+          <input name="furnishing" value={form.furnishing} placeholder="Furnishing" onChange={handleChange} />
+          <input name="floor" type="number" value={form.floor} placeholder="Floor" onChange={handleChange} />
+          <input name="totalFloors" type="number" value={form.totalFloors} placeholder="Total Floors" onChange={handleChange} />
         </div>
 
         {/* PROJECT */}
         <div className="form-section">
           <h3>Project Details</h3>
 
-          <input name="projectName" placeholder="Project Name" onChange={handleChange} />
-          <input name="developer" placeholder="Developer" onChange={handleChange} />
+          <input name="projectName" value={form.projectName} placeholder="Project Name" onChange={handleChange} />
+          <input name="developer" value={form.developer} placeholder="Developer" onChange={handleChange} />
         </div>
 
         {/* AMENITIES */}
@@ -260,6 +290,7 @@ function AddHouse() {
 
           <textarea
             name="fullAddress"
+            value={form.fullAddress}
             placeholder="Full Address"
             onChange={handleChange}
           />
@@ -269,8 +300,8 @@ function AddHouse() {
         <div className="form-section">
           <h3>Seller Info</h3>
 
-          <input name="sellerName" placeholder="Seller Name" onChange={handleChange} />
-          <input name="sellerPhone" placeholder="Seller Phone" onChange={handleChange} />
+          <input name="sellerName" value={form.sellerName} placeholder="Seller Name" onChange={handleChange} />
+          <input name="sellerPhone" value={form.sellerPhone} placeholder="Seller Phone" onChange={handleChange} />
         </div>
 
         <button className="submit-btn">
