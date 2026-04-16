@@ -5,11 +5,13 @@ import "../styles/houseDetails.css";
 
 function HouseDetails() {
   const { id } = useParams();
+
   const [house, setHouse] = useState(null);
   const [activeImg, setActiveImg] = useState(0);
-
   const [interest, setInterest] = useState(7.5);
   const [tenure, setTenure] = useState(20);
+
+  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
 
   useEffect(() => {
     API.get(`/houses/${id}`)
@@ -24,9 +26,10 @@ function HouseDetails() {
 
   const images = house.images || [];
 
-  // SAFE VALUES
   const getValue = (val) =>
-    val !== undefined && val !== null && val !== "" ? val : "Not Provided";
+    val !== undefined && val !== null && val !== ""
+      ? val
+      : "Not Provided";
 
   const price = Number(house.price || 0);
   const downPayment = Number(house.bookingAmount || 0);
@@ -47,13 +50,16 @@ function HouseDetails() {
 
   return (
     <div className="hd-page">
-      {/* ================= GALLERY ================= */}
+
+      {/* GALLERY */}
       <div className="hd-gallery">
+
         <div className="hd-main-img">
           <img
-            src={`http://localhost:3001${images[activeImg]}`}
-            alt=""
+            src={`${IMAGE_URL}${images[activeImg]}`}
+            alt="house"
           />
+
           <span className="img-count">
             {activeImg + 1}/{images.length}
           </span>
@@ -63,19 +69,22 @@ function HouseDetails() {
           {images.map((img, i) => (
             <img
               key={i}
-              src={`http://localhost:3001${img}`}
+              src={`${IMAGE_URL}${img}`}
+              alt="thumb"
               className={activeImg === i ? "active" : ""}
               onClick={() => setActiveImg(i)}
-              alt=""
             />
           ))}
         </div>
+
       </div>
 
-      {/* ================= LAYOUT ================= */}
+      {/* MAIN LAYOUT */}
       <div className="hd-layout">
+
         {/* LEFT */}
         <div className="hd-left">
+
           <h1>{getValue(house.title)}</h1>
           <p className="hd-location">{getValue(house.location)}</p>
 
@@ -102,6 +111,7 @@ function HouseDetails() {
           {/* PROPERTY DETAILS */}
           <div className="hd-card">
             <h3>Property Details</h3>
+
             <div className="hd-grid">
               <div>Facing: {getValue(house.facing)}</div>
               <div>Furnishing: {getValue(house.furnishing)}</div>
@@ -110,7 +120,7 @@ function HouseDetails() {
             </div>
           </div>
 
-          {/* PRICE BREAKDOWN */}
+          {/* PRICE */}
           <div className="hd-card beige">
             <h3>Price Breakdown</h3>
 
@@ -143,8 +153,9 @@ function HouseDetails() {
           {/* AMENITIES */}
           <div className="hd-card">
             <h3>Amenities</h3>
+
             <div className="hd-amenities wide">
-              {house.amenities && house.amenities.length > 0 ? (
+              {house.amenities?.length > 0 ? (
                 house.amenities.map((a, i) => (
                   <div key={i} className="amenity-card">
                     {a}
@@ -156,31 +167,43 @@ function HouseDetails() {
             </div>
           </div>
 
-          {/* MAP */}
-          {house.latitude && (
+          {/* GOOGLE MAP */}
+          {house.location && (
             <div className="hd-card">
               <h3>Location</h3>
+
               <iframe
                 title="map"
-                src={`https://www.google.com/maps?q=${house.latitude},${house.longitude}&z=15&output=embed`}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                  house.location
+                )}&z=15&output=embed`}
                 loading="lazy"
               />
             </div>
           )}
+
         </div>
 
         {/* RIGHT */}
         <div className="hd-right">
+
           {/* SELLER */}
           <div className="hd-seller">
             <h3>Contact Seller</h3>
-            <p className="seller-name">{getValue(house.sellerName)}</p>
+
+            <p className="seller-name">
+              {getValue(house.sellerName)}
+            </p>
+
             <p className="seller-role">Property Agent</p>
+
             <p>📞 {getValue(house.sellerPhone)}</p>
 
             <button
               className="btn-primary"
-              onClick={() => window.open(`tel:${house.sellerPhone}`)}
+              onClick={() =>
+                window.open(`tel:${house.sellerPhone}`)
+              }
             >
               📞 Call Now
             </button>
@@ -213,24 +236,30 @@ function HouseDetails() {
             <label>
               Interest Rate: <b>{interest}%</b>
             </label>
+
             <input
               type="range"
               min="3"
               max="15"
               step="0.1"
               value={interest}
-              onChange={(e) => setInterest(Number(e.target.value))}
+              onChange={(e) =>
+                setInterest(Number(e.target.value))
+              }
             />
 
             <label>
               Loan Tenure: <b>{tenure} Years</b>
             </label>
+
             <input
               type="range"
               min="5"
               max="30"
               value={tenure}
-              onChange={(e) => setTenure(Number(e.target.value))}
+              onChange={(e) =>
+                setTenure(Number(e.target.value))
+              }
             />
 
             <div className="emi-result">
@@ -238,6 +267,7 @@ function HouseDetails() {
               <strong>₹ {emi}</strong>
             </div>
           </div>
+
         </div>
       </div>
     </div>

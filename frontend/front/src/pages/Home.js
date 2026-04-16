@@ -12,15 +12,14 @@ function Home() {
   const [searchInput, setSearchInput] = useState("");
   const [wishlist, setWishlist] = useState([]);
 
-  // FILTER STATES
   const [locationFilter, setLocationFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [bedFilter, setBedFilter] = useState("");
   const [priceFilter, setPriceFilter] = useState("");
 
-  // ===============================
-  // FETCH APPROVED HOUSES
-  // ===============================
+  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+
+  /* FETCH APPROVED HOUSES */
   useEffect(() => {
     API.get("/houses/approved")
       .then((res) => {
@@ -29,9 +28,7 @@ function Home() {
       .catch((err) => console.log(err));
   }, []);
 
-  // ===============================
-  // FETCH USER WISHLIST
-  // ===============================
+  /* FETCH WISHLIST */
   useEffect(() => {
     if (isLoggedIn()) {
       API.get("/wishlist")
@@ -42,16 +39,10 @@ function Home() {
     }
   }, []);
 
-  // ===============================
-  // SEARCH BUTTON
-  // ===============================
   const handleSearch = () => {
     setQuery(searchInput);
   };
 
-  // ===============================
-  // TOGGLE WISHLIST
-  // ===============================
   const handleWishlist = async (houseId) => {
     if (!isLoggedIn()) {
       navigate("/login");
@@ -66,9 +57,6 @@ function Home() {
     }
   };
 
-  // ===============================
-  // SEARCH + FILTER LOGIC
-  // ===============================
   const filtered = houses.filter((h) => {
     const searchMatch =
       h.title?.toLowerCase().includes(query.toLowerCase()) ||
@@ -86,13 +74,19 @@ function Home() {
     const priceMatch =
       !priceFilter || Number(h.price) <= Number(priceFilter);
 
-    return searchMatch && locationMatch && typeMatch && bedMatch && priceMatch;
+    return (
+      searchMatch &&
+      locationMatch &&
+      typeMatch &&
+      bedMatch &&
+      priceMatch
+    );
   });
 
   return (
     <div className="home-page">
 
-      {/* ================= HERO SECTION ================= */}
+      {/* HERO */}
       <section className="hero-section">
 
         <video
@@ -114,9 +108,7 @@ function Home() {
           <h1>Find Your Dream Home</h1>
           <p>Discover luxury properties in the most exclusive locations</p>
 
-          {/* SEARCH BAR */}
           <div className="search-bar">
-
             <input
               type="text"
               placeholder="Search by location or property name..."
@@ -130,13 +122,11 @@ function Home() {
             <button onClick={handleSearch}>
               Search
             </button>
-
           </div>
         </div>
-
       </section>
 
-      {/* ================= FILTER SECTION ================= */}
+      {/* FILTER */}
       <section className="filter-section">
 
         <select
@@ -145,7 +135,9 @@ function Home() {
         >
           <option value="">Location</option>
           {[...new Set(houses.map((h) => h.location))].map((loc) => (
-            <option key={loc} value={loc}>{loc}</option>
+            <option key={loc} value={loc}>
+              {loc}
+            </option>
           ))}
         </select>
 
@@ -155,7 +147,9 @@ function Home() {
         >
           <option value="">Property Type</option>
           {[...new Set(houses.map((h) => h.type))].map((type) => (
-            <option key={type} value={type}>{type}</option>
+            <option key={type} value={type}>
+              {type}
+            </option>
           ))}
         </select>
 
@@ -165,7 +159,9 @@ function Home() {
         >
           <option value="">Bedrooms</option>
           {[...new Set(houses.map((h) => h.bedrooms))].map((bed) => (
-            <option key={bed} value={bed}>{bed} Beds</option>
+            <option key={bed} value={bed}>
+              {bed} Beds
+            </option>
           ))}
         </select>
 
@@ -181,12 +177,11 @@ function Home() {
 
       </section>
 
-      {/* ================= LISTING SECTION ================= */}
+      {/* LISTING */}
       <section className="listing-section">
         <h2>Available Properties ({filtered.length})</h2>
 
         {filtered.map((h) => {
-
           const isWishlisted = wishlist.some(
             (id) => id === h._id || id?._id === h._id
           );
@@ -194,28 +189,25 @@ function Home() {
           return (
             <div className="property-card" key={h._id}>
 
-              {/* IMAGE */}
               <div className="property-image">
-
                 <img
-                  src={`http://localhost:3001${h.images?.[0]}`}
+                  src={`${IMAGE_URL}${h.images?.[0]}`}
                   alt={h.title}
                   onClick={() => navigate(`/houses/${h._id}`)}
                 />
 
-                {/* WISHLIST */}
                 <div
-                  className={`wishlist-btn ${isWishlisted ? "active" : ""}`}
+                  className={`wishlist-btn ${
+                    isWishlisted ? "active" : ""
+                  }`}
                   onClick={() => handleWishlist(h._id)}
                 >
                   {isWishlisted ? "❤️" : "🤍"}
                 </div>
 
                 <span className="tag">For Sale</span>
-
               </div>
 
-              {/* INFO */}
               <div className="property-info">
 
                 <h3>{h.title}</h3>
@@ -228,10 +220,11 @@ function Home() {
                 </div>
 
                 <div className="price-row">
-
                   <div>
                     <strong>₹ {h.price}</strong>
-                    <small>₹ {h.pricePerSqft || "-"} / sqft</small>
+                    <small>
+                      ₹ {h.pricePerSqft || "-"} / sqft
+                    </small>
                   </div>
 
                   <button
@@ -240,11 +233,9 @@ function Home() {
                   >
                     View Details
                   </button>
-
                 </div>
 
               </div>
-
             </div>
           );
         })}

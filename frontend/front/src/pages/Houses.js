@@ -8,14 +8,18 @@ function Houses() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+
   const load = () => {
-    getApprovedHouses().then((res) => {
-      const data = res.data.map((h) => ({
-        ...h,
-        imageIndex: 0,
-      }));
-      setHouses(data);
-    });
+    getApprovedHouses()
+      .then((res) => {
+        const data = res.data.map((h) => ({
+          ...h,
+          imageIndex: 0,
+        }));
+        setHouses(data);
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
@@ -43,7 +47,8 @@ function Houses() {
           ? {
               ...h,
               imageIndex:
-                (h.imageIndex - 1 + h.images.length) % h.images.length,
+                (h.imageIndex - 1 + h.images.length) %
+                h.images.length,
             }
           : h
       )
@@ -56,10 +61,11 @@ function Houses() {
 
       {houses.map((h) => (
         <div className="listing-card" key={h._id}>
+
           {/* IMAGE */}
           <div className="listing-image">
             <img
-              src={`http://localhost:3001${h.images[h.imageIndex]}`}
+              src={`${IMAGE_URL}${h.images[h.imageIndex]}`}
               alt={h.title}
               onClick={() => navigate(`/houses/${h._id}`)}
             />
@@ -72,6 +78,7 @@ function Houses() {
                 >
                   ‹
                 </button>
+
                 <button
                   className="img-btn right"
                   onClick={() => nextImage(h._id)}
@@ -92,8 +99,14 @@ function Houses() {
             onClick={() => navigate(`/houses/${h._id}`)}
           >
             <h3>{h.title}</h3>
+
             <p className="sub-location">{h.location}</p>
-            <p>{h.description?.slice(0, 100)}...</p>
+
+            <p>
+              {h.description
+                ? `${h.description.slice(0, 100)}...`
+                : "No description available"}
+            </p>
           </div>
 
           {/* ACTION */}
@@ -107,7 +120,7 @@ function Houses() {
               View Details
             </button>
 
-            {/* ✅ ADMIN DELETE */}
+            {/* ADMIN DELETE */}
             {user?.role === "admin" && (
               <button
                 className="btn danger"
@@ -125,6 +138,7 @@ function Houses() {
               </button>
             )}
           </div>
+
         </div>
       ))}
     </div>

@@ -6,6 +6,8 @@ function ImageSlider({ images }) {
 
   if (!images || images.length === 0) return null;
 
+  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+
   const prev = () => {
     setIndex(index === 0 ? images.length - 1 : index - 1);
   };
@@ -17,7 +19,7 @@ function ImageSlider({ images }) {
   return (
     <div className="slider">
       <img
-        src={`http://localhost:3001${images[index]}`}
+        src={`${IMAGE_URL}${images[index]}`}
         alt="house"
         className="slider-img"
       />
@@ -27,6 +29,7 @@ function ImageSlider({ images }) {
           <button className="slider-btn left" onClick={prev}>
             ‹
           </button>
+
           <button className="slider-btn right" onClick={next}>
             ›
           </button>

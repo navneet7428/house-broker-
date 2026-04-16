@@ -12,6 +12,8 @@ function AdminPendingHouses() {
   const [approved, setApproved] = useState([]);
   const [approvedToday, setApprovedToday] = useState(0);
 
+  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+
   const loadData = async () => {
     try {
       const pendingRes = await getPendingHouses();
@@ -20,13 +22,14 @@ function AdminPendingHouses() {
       setPending(pendingRes.data);
       setApproved(approvedRes.data);
 
-      // ✅ approved today logic
       const today = new Date().toISOString().slice(0, 10);
+
       const todayApproved = approvedRes.data.filter(
         (h) => h.approvedAt?.slice(0, 10) === today
       );
 
       setApprovedToday(todayApproved.length);
+
     } catch (err) {
       console.log(err);
     }
@@ -41,13 +44,14 @@ function AdminPendingHouses() {
 
   return (
     <div className="admin-page">
-      {/* ===== HEADER ===== */}
+
+      {/* HEADER */}
       <div className="admin-header">
         <h2>Admin Dashboard</h2>
         <p>Manage property listings and approvals</p>
       </div>
 
-      {/* ===== STATS ===== */}
+      {/* STATS */}
       <div className="stats-grid">
         <div className="stat-card">
           <p>Pending Approval</p>
@@ -65,7 +69,7 @@ function AdminPendingHouses() {
         </div>
       </div>
 
-      {/* ===== LIST ===== */}
+      {/* LIST */}
       <div className="pending-box">
         <h3>Pending Approvals</h3>
 
@@ -74,8 +78,9 @@ function AdminPendingHouses() {
         ) : (
           pending.map((h) => (
             <div className="pending-card" key={h._id}>
+
               <img
-                src={`http://localhost:3001${h.images?.[0]}`}
+                src={`${IMAGE_URL}${h.images?.[0]}`}
                 alt={h.title}
               />
 
@@ -92,11 +97,10 @@ function AdminPendingHouses() {
                 <p className="price">₹ {h.price}</p>
 
                 <div className="actions">
+
                   <button
                     className="approve"
-                    onClick={() =>
-                      approveHouse(h._id).then(loadData)
-                    }
+                    onClick={() => approveHouse(h._id).then(loadData)}
                   >
                     ✓ Approve
                   </button>
@@ -111,6 +115,7 @@ function AdminPendingHouses() {
                   >
                     ✕ Reject
                   </button>
+
                 </div>
               </div>
             </div>

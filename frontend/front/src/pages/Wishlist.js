@@ -7,6 +7,8 @@ function Wishlist() {
   const navigate = useNavigate();
   const [houses, setHouses] = useState([]);
 
+  const IMAGE_URL = process.env.REACT_APP_API_URL.replace("/api", "");
+
   useEffect(() => {
     API.get("/wishlist")
       .then((res) => {
@@ -22,22 +24,27 @@ function Wishlist() {
         <h2>My Wishlist ({houses.length})</h2>
 
         {houses.length === 0 && (
-          <p style={{marginTop:"20px"}}>No saved properties yet</p>
+          <p style={{ marginTop: "20px" }}>
+            No saved properties yet
+          </p>
         )}
 
         {houses.map((h) => (
           <div className="property-card" key={h._id}>
 
+            {/* IMAGE */}
             <div className="property-image">
               <img
-                src={`http://localhost:3001${h.images?.[0]}`}
+                src={`${IMAGE_URL}${h.images?.[0]}`}
                 alt={h.title}
                 onClick={() => navigate(`/houses/${h._id}`)}
               />
             </div>
 
+            {/* INFO */}
             <div className="property-info">
               <h3>{h.title}</h3>
+
               <p className="location">{h.location}</p>
 
               <div className="specs">
